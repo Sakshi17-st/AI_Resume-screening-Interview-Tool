@@ -1,130 +1,143 @@
-# AI-Based Resume Screening & Interview Prep Tool
+ AI Resume Screening & Interview Prep Tool
 
-A Flask web application that:
-1. Accepts a resume (PDF / DOCX / TXT) and a job description.
-2. Calculates a **match score** using TF-IDF + Cosine Similarity (NLP/ML).
-3. Shows **matched skills**, **missing skills**, and **extra skills**.
-4. Generates **mock technical + behavioral interview questions** based on the skills found in your resume.
+An intelligent web-based application built with **Python and Flask** to analyze resumes against job descriptions. The system extracts resume content, calculates a resume-job similarity score using **TF-IDF and Cosine Similarity**, identifies skill gaps, and generates technical and behavioral interview questions.
 
----
+ Project Overview
 
-## 📁 Project Structure
+Recruiters and job seekers often need to determine how well a resume matches a particular job role. Manually comparing resumes with job descriptions can be time-consuming.
 
-```
-resume_screening_tool/
-├── app.py                  # Main Flask application (routes)
-├── requirements.txt        # Python dependencies
-├── utils/
-│   ├── resume_parser.py    # Extracts text from PDF/DOCX/TXT
-│   ├── matcher.py          # TF-IDF similarity + skill matching logic
-│   └── question_bank.py    # Interview question generator
-├── templates/
-│   ├── index.html          # Upload form page
-│   └── result.html         # Results page (score, skills, questions)
-├── static/
-│   └── style.css           # Basic styling
-└── uploads/                # Temporary storage for uploaded resumes (auto-cleared)
-```
+This project automates the initial screening process by allowing users to upload their resume and provide a job description. The application analyzes both documents and provides a detailed result including:
+
+- Resume-to-job match score
+- Matched skills
+- Missing skills
+- Extra skills
+- Technical interview questions
+- Behavioral interview questions
+
+The project is implemented as a lightweight Flask web application and is suitable for academic projects, demonstrations, and portfolio use.
 
 ---
 
-## 🖥️ How to Extract the ZIP File
+ Features
 
-**On Windows:**
-1. Right-click the downloaded `resume_screening_tool.zip` file.
-2. Click **"Extract All..."**
-3. Choose a destination folder and click **Extract**.
+ Resume Parsing
 
-**On Mac:**
-1. Double-click the `resume_screening_tool.zip` file — it extracts automatically into the same folder.
+Supports multiple resume formats:
 
-**On Linux / Terminal (Windows/Mac too, if you prefer command line):**
-```bash
-unzip resume_screening_tool.zip -d resume_screening_tool
-cd resume_screening_tool
-```
+- PDF
+- DOCX
+- TXT
 
----
+The application extracts text automatically from the uploaded file.
 
-## ⚙️ How to Run the Project
+📊 Resume Matching
 
-### Step 1 — Install Python
-Make sure Python 3.9+ is installed. Check with:
-```bash
-python --version
-```
-(If not installed, download from https://www.python.org/downloads/)
+The system compares the extracted resume text with the provided job description using:
 
-### Step 2 — (Recommended) Create a virtual environment
-```bash
-python -m venv venv
-```
-Activate it:
-- **Windows:** `venv\Scripts\activate`
-- **Mac/Linux:** `source venv/bin/activate`
+- Text preprocessing
+- TF-IDF vectorization
+- Cosine similarity
 
-### Step 3 — Install dependencies
-```bash
-pip install -r requirements.txt
-```
+The similarity result is converted into a percentage-based match score.
 
-### Step 4 — Run the app
-```bash
-python app.py
-```
+Skill Gap Analysis
 
-### Step 5 — Open in browser
-Go to: **http://127.0.0.1:5000**
+The application uses a predefined skill database covering programming, web development, AI/ML, databases, cloud, DevOps, mobile development, computer science fundamentals, and soft skills.
 
-Upload a resume (PDF/DOCX/TXT), paste a job description, and click **Analyze Resume**.
+It identifies:
 
----
+- **Matched Skills** – Skills available in both the resume and job description.
+- **Missing Skills** – Skills mentioned in the job description but not detected in the resume.
+- **Extra Skills** – Skills detected in the resume but not mentioned in the job description.
 
-## 🧠 How It Works (for your project report / viva)
+🎯 Match Verdict
 
-1. **Resume Parsing** (`utils/resume_parser.py`)
-   Uses `PyPDF2` for PDFs and `python-docx` for Word files to extract raw text.
+The system provides a simple verdict based on the calculated score:
 
-2. **Match Scoring** (`utils/matcher.py`)
-   - Cleans and normalizes both resume text and job description text.
-   - Converts both into TF-IDF vectors using `scikit-learn`'s `TfidfVectorizer`.
-   - Computes **Cosine Similarity** between the two vectors → gives a 0–100% match score.
-
-3. **Skill Extraction & Gap Analysis** (`utils/matcher.py`)
-   - Matches text against a curated list (`SKILLS_DB`) of ~80 common technical/soft skills.
-   - Reports:
-     - **Matched skills** — present in both resume and JD.
-     - **Missing skills** — required by JD but not found in resume.
-     - **Extra skills** — present in resume but not required by JD.
-
-4. **Interview Question Generation** (`utils/question_bank.py`)
-   - Uses a curated question bank mapped to common skills.
-   - Falls back to templated questions for skills not in the bank.
-   - Adds a set of standard behavioral/HR questions.
-
----
-
-## 🚀 Possible Enhancements (Future Scope)
-
-- Replace TF-IDF with sentence embeddings (e.g., `sentence-transformers`) for smarter semantic matching.
-- Add authentication and a database (SQLite/MongoDB) to save analysis history.
-- Support OCR (`pytesseract`) for scanned/image-based resumes.
-- Deploy on cloud (Render/Railway/Heroku/AWS) for public access.
-- Integrate a large language model API for dynamic, context-aware interview questions.
-- Add a resume formatting/ATS-friendliness checker.
-
----
-
-## 🐛 Troubleshooting
-
-| Issue | Fix |
+| Score | Verdict |
 |---|---|
-| `ModuleNotFoundError` | Run `pip install -r requirements.txt` again inside the activated virtual environment. |
-| Port 5000 already in use | Change the port in the last line of `app.py`, e.g. `app.run(debug=True, port=5001)`. |
-| PDF text not extracting | The PDF might be a scanned image. Try converting it to text-based PDF, or use a DOCX/TXT file instead. |
-| Blank/0% score | Make sure both the resume and job description have enough real text (not just a title). |
+| 75% and above | Excellent Match |
+| 50% – 74.99% | Good Match |
+| 30% – 49.99% | Fair Match – Resume Needs Improvement |
+| Below 30% | Poor Match – Resume Needs Significant Tailoring |
+
+💻 Interview Preparation
+
+Based on the matched skills, the system generates technical interview questions.
+
+It also provides behavioral interview questions covering topics such as:
+
+- Self introduction
+- Teamwork
+- Leadership
+- Failure and learning
+- Career goals
+- Hiring-related questions
 
 ---
 
-## 📄 License
-Free to use and modify for academic/educational purposes (final year project).
+ Technology Stack
+
+| Technology | Purpose |
+|---|---|
+| Python | Backend development |
+| Flask | Web application framework |
+| PyPDF2 | PDF text extraction |
+| python-docx | DOCX text extraction |
+| Scikit-learn | NLP and similarity calculation |
+| TF-IDF | Text feature extraction |
+| Cosine Similarity | Resume-JD similarity measurement |
+| HTML5 | Frontend structure |
+| CSS3 | Custom styling |
+| Bootstrap 5 | Responsive UI |
+
+---
+
+ System Workflow
+
+```text
+             Resume Upload
+                   ↓
+             File Validation
+                   ↓
+            Resume Parsing
+          PDF / DOCX / TXT
+                   ↓
+          Text Preprocessing
+                   ↓
+        Job Description Input
+                   ↓
+          TF-IDF Vectorization
+                   ↓
+          Cosine Similarity
+                   ↓
+            Match Score
+                   ↓
+            Skill Analysis
+       ┌───────────┼───────────┐
+       ↓           ↓           ↓
+    Matched      Missing      Extra
+     Skills      Skills      Skills
+       └───────────┬───────────┘
+                   ↓
+        Interview Question
+             Generation
+                   ↓
+             Result Page
+
+Project Structure
+
+AI-Resume-Screening-Interview-Prep-Tool-main/
+│
+├── app.py
+├── resume_parser.py
+├── matcher.py
+├── question_bank.py
+├── index.html
+├── result.html
+├── style.css
+├── requirements.txt
+├── README.md
+└── .gitignore
+
